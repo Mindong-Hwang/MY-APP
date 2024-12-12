@@ -8,11 +8,12 @@ generator client {
 }
 
 model Clothing {
-  id          Int      @id @default(autoincrement())
-  name        String
-  minTemp     Int
-  maxTemp     Int
-  weather     String   // 쉼표로 구분된 문자열로 변경
-  image       String
+  id         Int     @id @default(autoincrement())
+  name       String
+  type       String  // 'Outer', 'Tops', 'Bottoms'
+  minTemp    Int
+  maxTemp    Int
+  weather    String  // 쉼표로 구분된 문자열로 변경
+  image      String
   description String
 }

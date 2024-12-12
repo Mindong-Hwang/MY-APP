@@ -12,6 +12,7 @@ export default function Home() {
   const [clothingList, setClothingList] = useState([]);
   const [newClothing, setNewClothing] = useState({
     name: "",
+    type: "Outer", // Default type
     minTemp: "",
     maxTemp: "",
     weather: "",
@@ -20,6 +21,7 @@ export default function Home() {
   });
 
   const weatherOptions = ["Sunny", "Cloudy", "Rain", "Shower", "Snow", "Pellets", "Thunder"];
+  const clothingTypes = ["Outer", "Tops", "Bottoms"]; // 분류 추가
 
   const fetchClothingList = async () => {
     try {
@@ -64,9 +66,9 @@ export default function Home() {
     let selectedWeather = newClothing.weather.split(",").map((w) => w.trim()).filter(Boolean);
 
     if (checked) {
-      selectedWeather.push(value); // Add the selected value
+      selectedWeather.push(value);
     } else {
-      selectedWeather = selectedWeather.filter((w) => w !== value); // Remove the unselected value
+      selectedWeather = selectedWeather.filter((w) => w !== value);
     }
 
     setNewClothing({ ...newClothing, weather: selectedWeather.join(",") });
@@ -84,6 +86,7 @@ export default function Home() {
         alert("Clothing added successfully!");
         setNewClothing({
           name: "",
+          type: "Outer",
           minTemp: "",
           maxTemp: "",
           weather: "",
@@ -100,23 +103,25 @@ export default function Home() {
   };
 
   const handleDeleteClothing = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this clothing item?");
-    if (!confirmDelete) return; // 취소 시 삭제 진행하지 않음
-  
     try {
       const response = await fetch(`/api/deleteClothing?id=${id}`, { method: "DELETE" });
       if (response.ok) {
         alert("Clothing deleted successfully!");
-        fetchClothingList(); // 리스트 갱신
+        fetchClothingList();
       } else {
-        const errorData = await response.json();
-        alert(`Failed to delete clothing: ${errorData.error || "Unknown error"}`);
+        console.error("Failed to delete clothing.");
       }
     } catch (error) {
-      console.error("Error deleting clothing:", error.message);
-      alert("An unexpected error occurred while deleting clothing.");
+      console.error("Error deleting clothing:", error);
     }
-  };  
+  };
+
+  // 의류 타입별 분류
+  const clothingByType = {
+    Outer: clothingList.filter((item) => item.type === "Outer"),
+    Tops: clothingList.filter((item) => item.type === "Tops"),
+    Bottoms: clothingList.filter((item) => item.type === "Bottoms"),
+  };
 
   return (
     <main style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
@@ -124,44 +129,49 @@ export default function Home() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         {/* Clothing List */}
         <div style={{ flex: "2", marginRight: "20px" }}>
-          {clothingList.length > 0 ? (
-            <ul>
-              {clothingList.map((item) => (
-                <li key={item.id} style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{ width: "100px", height: "100px", marginRight: "20px" }}
-                  />
-                  <div>
-                    <h3>{item.name}</h3>
-                    <p>{item.description}</p>
-                    <p>
-                      <strong>Temperature Range:</strong> {item.minTemp}°C - {item.maxTemp}°C
-                    </p>
-                    <p>
-                      <strong>Weather:</strong> {item.weather}
-                    </p>
-                    <button
-                      onClick={() => handleDeleteClothing(item.id)}
-                      style={{
-                        padding: "5px 10px",
-                        backgroundColor: "#f44336",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No clothing data available.</p>
-          )}
+          {Object.keys(clothingByType).map((type) => (
+            <div key={type}>
+              <h2>{type}</h2>
+              {clothingByType[type].length > 0 ? (
+                <ul>
+                  {clothingByType[type].map((item) => (
+                    <li key={item.id} style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{ width: "100px", height: "100px", marginRight: "20px" }}
+                      />
+                      <div>
+                        <h3>{item.name}</h3>
+                        <p>{item.description}</p>
+                        <p>
+                          <strong>Temperature Range:</strong> {item.minTemp}°C - {item.maxTemp}°C
+                        </p>
+                        <p>
+                          <strong>Weather:</strong> {item.weather}
+                        </p>
+                        <button
+                          onClick={() => handleDeleteClothing(item.id)}
+                          style={{
+                            padding: "5px 10px",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No {type.toLowerCase()} available.</p>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Add Clothing Form */}
@@ -176,7 +186,18 @@ export default function Home() {
               required
               style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
             />
-            {/* Weather Options */}
+            <select
+              value={newClothing.type}
+              onChange={(e) => setNewClothing({ ...newClothing, type: e.target.value })}
+              required
+              style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+            >
+              {clothingTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
             <div>
               <label style={{ fontWeight: "bold", marginBottom: "10px", display: "block" }}>Weather:</label>
               {weatherOptions.map((option) => (

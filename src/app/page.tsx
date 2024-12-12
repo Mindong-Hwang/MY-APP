@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 
 export default function Home() {
   const [city, setCity] = useState("");
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState(null);
   const [weatherInfo, setWeatherInfo] = useState({ temperature: "", weather: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,7 +12,7 @@ export default function Home() {
   const [clothingList, setClothingList] = useState([]);
   const [newClothing, setNewClothing] = useState({
     name: "",
-    type: "Outer", // Default type
+    type: "Outer",
     minTemp: "",
     maxTemp: "",
     weather: "",
@@ -20,8 +20,14 @@ export default function Home() {
     description: "",
   });
 
+  const [pagination, setPagination] = useState({
+    Outer: { page: 1, itemsPerPage: 1 },
+    Tops: { page: 1, itemsPerPage: 1 },
+    Bottoms: { page: 1, itemsPerPage: 1 },
+  });
+
   const weatherOptions = ["Sunny", "Cloudy", "Rain", "Shower", "Snow", "Pellets", "Thunder"];
-  const clothingTypes = ["Outer", "Tops", "Bottoms"]; // 분류 추가
+  const clothingTypes = ["Outer", "Tops", "Bottoms"];
 
   const fetchClothingList = async () => {
     try {
@@ -116,11 +122,31 @@ export default function Home() {
     }
   };
 
-  // 의류 타입별 분류
+  const handlePageChange = (type, direction) => {
+    setPagination((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        page: Math.max(1, prev[type].page + direction),
+      },
+    }));
+  };
+
   const clothingByType = {
     Outer: clothingList.filter((item) => item.type === "Outer"),
     Tops: clothingList.filter((item) => item.type === "Tops"),
     Bottoms: clothingList.filter((item) => item.type === "Bottoms"),
+  };
+
+  const paginatedClothing = (type) => {
+    const { page, itemsPerPage } = pagination[type];
+    const startIndex = (page - 1) * itemsPerPage;
+    return clothingByType[type].slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const totalPages = (type) => {
+    const { itemsPerPage } = pagination[type];
+    return Math.ceil(clothingByType[type].length / itemsPerPage);
   };
 
   return (
@@ -132,9 +158,9 @@ export default function Home() {
           {Object.keys(clothingByType).map((type) => (
             <div key={type}>
               <h2>{type}</h2>
-              {clothingByType[type].length > 0 ? (
+              {paginatedClothing(type).length > 0 ? (
                 <ul>
-                  {clothingByType[type].map((item) => (
+                  {paginatedClothing(type).map((item) => (
                     <li key={item.id} style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
                       <img
                         src={item.image}
@@ -170,6 +196,43 @@ export default function Home() {
               ) : (
                 <p>No {type.toLowerCase()} available.</p>
               )}
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", alignItems: "center" }}>
+                <button
+                  onClick={() => handlePageChange(type, -1)}
+                  disabled={pagination[type].page === 1}
+                  style={{
+                    margin: "0 5px",
+                    padding: "5px 10px",
+                    backgroundColor: pagination[type].page === 1 ? "#ccc" : "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: pagination[type].page === 1 ? "not-allowed" : "pointer",
+                  }}
+                >
+                  Previous
+                </button>
+                <span style={{ margin: "0 10px" }}>
+                  Page {pagination[type].page} of {totalPages(type)}
+                </span>
+                <button
+                  onClick={() => handlePageChange(type, 1)}
+                  disabled={pagination[type].page === totalPages(type)}
+                  style={{
+                    margin: "0 5px",
+                    padding: "5px 10px",
+                    backgroundColor:
+                      pagination[type].page === totalPages(type) ? "#ccc" : "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor:
+                      pagination[type].page === totalPages(type) ? "not-allowed" : "pointer",
+                  }}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -309,24 +372,40 @@ export default function Home() {
         </div>
       )}
 
-      {recommendations.length > 0 && !loading && (
+      {recommendations && (
         <div>
           <h2>Recommended Clothes:</h2>
-          <ul>
-            {recommendations.map((item) => (
-              <li key={item.id} style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
-                <img src={item.image} alt={item.name} style={{ width: "100px", height: "100px", marginRight: "20px" }} />
-                <div>
-                  <h3>{item.name}</h3>
-                  <p>{item.description}</p>
+          {["Outer", "Tops", "Bottoms"].map((type) => (
+            <div key={type} style={{ marginBottom: "20px" }}>
+              <h3>{type}</h3>
+              {recommendations[type] ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img
+                    src={recommendations[type].image}
+                    alt={recommendations[type].name}
+                    style={{ width: "100px", height: "100px", marginRight: "20px" }}
+                  />
+                  <div>
+                    <h4>{recommendations[type].name}</h4>
+                    <p>{recommendations[type].description}</p>
+                    <p>
+                      <strong>Temperature Range:</strong> {recommendations[type].minTemp}°C -{" "}
+                      {recommendations[type].maxTemp}°C
+                    </p>
+                    <p>
+                      <strong>Weather:</strong> {recommendations[type].weather}
+                    </p>
+                  </div>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ) : (
+                <p>No recommendations available for {type}.</p>
+              )}
+            </div>
+          ))}
         </div>
       )}
 
-      {recommendations.length === 0 && !loading && !error && (
+      {recommendations === null && !loading && !error && (
         <p>No clothing recommendations match the current weather conditions.</p>
       )}
     </main>

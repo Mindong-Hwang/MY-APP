@@ -18,27 +18,57 @@ export default async function handler(req, res) {
         throw new Error("Failed to fetch weather data.");
       }
       const weatherData = await weatherResponse.json();
-      const { temperature, weather } = weatherData;
+      const { temperature, weather } = weatherData; // `weather` is the response value to match
 
-      // Query clothing data from the database
-      const clothingData = await prisma.clothing.findMany({
-        where: {
-          AND: [
-            { minTemp: { lte: temperature } },
-            { maxTemp: { gte: temperature } },
-          ],
-        },
-      });
+      // Query clothing data for each type
+      const clothingByType = {
+        Outer: await prisma.clothing.findMany({
+          where: {
+            type: "Outer",
+            AND: [
+              { minTemp: { lte: temperature } },
+              { maxTemp: { gte: temperature } },
+              { weather: { contains: weather } },
+            ],
+          },
+        }),
+        Tops: await prisma.clothing.findMany({
+          where: {
+            type: "Tops",
+            AND: [
+              { minTemp: { lte: temperature } },
+              { maxTemp: { gte: temperature } },
+              { weather: { contains: weather } },
+            ],
+          },
+        }),
+        Bottoms: await prisma.clothing.findMany({
+          where: {
+            type: "Bottoms",
+            AND: [
+              { minTemp: { lte: temperature } },
+              { maxTemp: { gte: temperature } },
+              { weather: { contains: weather } },
+            ],
+          },
+        }),
+      };
 
-      // Filter by weather condition manually
-      const filteredClothing = clothingData.filter((item) =>
-        item.weather.split(",").map((w) => w.trim()).includes(weather)
-      );
+      // Randomly select one item from each type
+      const recommendations = Object.entries(clothingByType).reduce((result, [type, items]) => {
+        if (items.length > 0) {
+          const randomItem = items[Math.floor(Math.random() * items.length)];
+          result[type] = randomItem;
+        } else {
+          result[type] = null; // No recommendation for this type
+        }
+        return result;
+      }, {});
 
       res.status(200).json({
         temperature,
         weather,
-        recommendations: filteredClothing,
+        recommendations,
       });
     } catch (error) {
       console.error("Error fetching recommendations:", error.message);

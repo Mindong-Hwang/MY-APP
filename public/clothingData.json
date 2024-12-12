@@ -1,0 +1,165 @@
+[
+    {
+      "id": 1,
+      "name": "Winter Jacket",
+      "minTemp": -20,
+      "maxTemp": 5,
+      "weather": "Snow",
+      "image": "/images/winter_jacket.jpg",
+      "description": "A heavy-duty jacket for freezing temperatures and snowy days."
+    },
+    {
+      "id": 2,
+      "name": "Raincoat",
+      "minTemp": 0,
+      "maxTemp": 20,
+      "weather": "Rain",
+      "image": "/images/raincoat.jpg",
+      "description": "A waterproof coat perfect for wet conditions."
+    },
+    {
+      "id": 3,
+      "name": "T-shirt",
+      "minTemp": 20,
+      "maxTemp": 40,
+      "weather": "Clear",
+      "image": "/images/tshirt.jpg",
+      "description": "Stay cool and comfortable in warm weather with this casual t-shirt."
+    },
+    {
+      "id": 4,
+      "name": "Sweater",
+      "minTemp": 5,
+      "maxTemp": 15,
+      "weather": "Cloudy",
+      "image": "/images/sweater.jpg",
+      "description": "A stylish sweater suitable for cool and overcast days."
+    },
+    {
+      "id": 5,
+      "name": "Light Jacket",
+      "minTemp": 10,
+      "maxTemp": 20,
+      "weather": "Partly cloudy",
+      "image": "/images/light_jacket.jpg",
+      "description": "A lightweight jacket ideal for slightly chilly and partly cloudy days."
+    },
+    {
+      "id": 6,
+      "name": "Hoodie",
+      "minTemp": 10,
+      "maxTemp": 20,
+      "weather": "Cloudy",
+      "image": "/images/hoodie.jpg",
+      "description": "A comfortable and warm hoodie for casual wear."
+    },
+    {
+      "id": 7,
+      "name": "Poncho",
+      "minTemp": 15,
+      "maxTemp": 25,
+      "weather": "Light rain",
+      "image": "/images/poncho.jpg",
+      "description": "A lightweight poncho for moderate rain."
+    },
+    {
+      "id": 8,
+      "name": "Flip Flops",
+      "minTemp": 25,
+      "maxTemp": 40,
+      "weather": "Clear",
+      "image": "/images/flip_flops.jpg",
+      "description": "Comfortable flip flops ideal for hot and sunny weather."
+    },
+    {
+      "id": 9,
+      "name": "Parka",
+      "minTemp": -10,
+      "maxTemp": 5,
+      "weather": "Snow",
+      "image": "/images/parka.jpg",
+      "description": "An insulated parka for extremely cold and snowy days."
+    },
+    {
+      "id": 10,
+      "name": "Formal Suit",
+      "minTemp": 10,
+      "maxTemp": 30,
+      "weather": "Any",
+      "image": "/images/formal_suit.jpg",
+      "description": "A versatile formal suit suitable for various weather conditions."
+    },
+    {
+      "id": 11,
+      "name": "Denim Jacket",
+      "minTemp": 15,
+      "maxTemp": 25,
+      "weather": "Partly cloudy",
+      "image": "/images/denim_jacket.jpg",
+      "description": "A classic denim jacket for mild and partly cloudy weather."
+    },
+    {
+      "id": 12,
+      "name": "Heavy Coat",
+      "minTemp": -15,
+      "maxTemp": 0,
+      "weather": "Blizzard",
+      "image": "/images/heavy_coat.jpg",
+      "description": "A heavy coat to protect you from harsh blizzards."
+    },
+    {
+      "id": 13,
+      "name": "Sportswear",
+      "minTemp": 15,
+      "maxTemp": 30,
+      "weather": "Sunny",
+      "image": "/images/sportswear.jpg",
+      "description": "Perfect sportswear for active and sunny days."
+    },
+    {
+      "id": 14,
+      "name": "Hiking Boots",
+      "minTemp": 10,
+      "maxTemp": 20,
+      "weather": "Windy",
+      "image": "/images/hiking_boots.jpg",
+      "description": "Hiking boots designed for windy trails and outdoor adventures."
+    },
+    {
+      "id": 15,
+      "name": "Ski Pants",
+      "minTemp": -10,
+      "maxTemp": 5,
+      "weather": "Snow",
+      "image": "/images/ski_pants.jpg",
+      "description": "Warm ski pants for snowy activities."
+    },
+    {
+      "id": 16,
+      "name": "Rain Boots",
+      "minTemp": 0,
+      "maxTemp": 20,
+      "weather": "Heavy rain",
+      "image": "/images/rain_boots.jpg",
+      "description": "Durable rain boots for heavy rain and wet conditions."
+    },
+    {
+      "id": 17,
+      "name": "Scarf",
+      "minTemp": 5,
+      "maxTemp": 15,
+      "weather": "Windy",
+      "image": "/images/scarf.jpg",
+      "description": "A cozy scarf for windy and cool days."
+    },
+    {
+      "id": 18,
+      "name": "Casual Shirt",
+      "minTemp": 15,
+      "maxTemp": 25,
+      "weather": "Cloudy",
+      "image": "/images/casual_shirt.jpg",
+      "description": "A casual shirt perfect for overcast weather."
+    }
+  ]
+  

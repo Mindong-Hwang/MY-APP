@@ -12,15 +12,15 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Fetch weather data
+      // 1) 현재 날씨/온도를 가져오기
       const weatherResponse = await fetch(`http://localhost:3000/api/weather?city=${city}`);
       if (!weatherResponse.ok) {
         throw new Error("Failed to fetch weather data.");
       }
       const weatherData = await weatherResponse.json();
-      const { temperature, weather } = weatherData; // `weather` is the response value to match
+      const { temperature, weather } = weatherData; // 예: { temperature: 25, weather: "Cloudy" }
 
-      // Query clothing data for each type
+      // 2) "Shoes" 타입을 포함해, 각 타입별로 날씨/온도 조건에 맞는 옷(또는 신발) 조회
       const clothingByType = {
         Outer: await prisma.clothing.findMany({
           where: {
@@ -52,19 +52,33 @@ export default async function handler(req, res) {
             ],
           },
         }),
+        // -------------------------
+        // 신발 항목 추가 (Shoes)
+        Shoes: await prisma.clothing.findMany({
+          where: {
+            type: "Shoes",
+            AND: [
+              { minTemp: { lte: temperature } },
+              { maxTemp: { gte: temperature } },
+              { weather: { contains: weather } },
+            ],
+          },
+        }),
+        // -------------------------
       };
 
-      // Randomly select one item from each type
+      // 3) 각 타입별로 무작위 아이템 1개씩 추천
       const recommendations = Object.entries(clothingByType).reduce((result, [type, items]) => {
         if (items.length > 0) {
           const randomItem = items[Math.floor(Math.random() * items.length)];
           result[type] = randomItem;
         } else {
-          result[type] = null; // No recommendation for this type
+          result[type] = null;
         }
         return result;
       }, {});
 
+      // 4) 응답
       res.status(200).json({
         temperature,
         weather,
